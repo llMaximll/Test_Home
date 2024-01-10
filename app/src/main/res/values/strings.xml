@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Test_Home</string>
+
+    <string name="app_app_bar_title">Мой дом</string>
+    <string name="app_tabs_cameras">Камеры</string>
+    <string name="app_tabs_doors">Двери</string>
+</resources>
