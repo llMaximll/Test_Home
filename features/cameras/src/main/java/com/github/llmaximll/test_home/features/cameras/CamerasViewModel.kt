@@ -20,7 +20,8 @@ class CamerasViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mutableCameras = MutableLiveData<CamerasUiState>(CamerasUiState.Init)
-    val cameras: LiveData<CamerasUiState> = mutableCameras
+    val cameras: LiveData<CamerasUiState>
+        get() = mutableCameras
 
     private var job: Job? = null
 

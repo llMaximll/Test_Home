@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 fun rememberShimmerEffect(): Color {
     val animatedValue = remember { Animatable(Color.DarkGray) }
 
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
         animatedValue.animateTo(
             targetValue = Color.LightGray,
             animationSpec = infiniteRepeatable(
@@ -21,7 +21,7 @@ fun rememberShimmerEffect(): Color {
                 repeatMode = RepeatMode.Reverse
             )
         )
-    }
+    }*/
 
     return animatedValue.value
 }

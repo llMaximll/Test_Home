@@ -197,7 +197,7 @@ private fun DoorsList(
     ) {
         itemsIndexed(
             items = items,
-            key = { _, item -> item.hashCode() }
+            key = { _, item -> item.localId }
         ) { _, door: Door ->
             DoorItem(
                 door = door,

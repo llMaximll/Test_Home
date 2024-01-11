@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -154,7 +155,8 @@ private fun TabsContent(
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
-        userScrollEnabled = false
+        userScrollEnabled = false,
+        beyondBoundsPageCount = 1
     ) { page ->
         when (page) {
             0 -> CamerasScreen()

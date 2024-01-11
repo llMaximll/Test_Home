@@ -168,7 +168,7 @@ private fun CamerasList(
     ) {
         itemsIndexed(
             items = items,
-            key = { _, item -> item.hashCode() }
+            key = { _, item -> item.localId }
         ) { index, item: CameraDetails ->
             if (item.room != prevRoom || index == 0) {
                 CommonText(
