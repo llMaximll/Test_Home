@@ -1,8 +1,6 @@
 package com.github.llmaximll.test_home.features.cameras
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,28 +20,30 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,6 +61,10 @@ import com.github.llmaximll.test_home.core.common.log
 import com.github.llmaximll.test_home.core.common.models.CameraDetails
 import com.github.llmaximll.test_home.core.common.models.Room
 import com.github.llmaximll.test_home.core.common.theme.AppColors
+import com.kevinnzou.compose.swipebox.SwipeBox
+import com.kevinnzou.compose.swipebox.widget.SwipeIcon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import com.github.llmaximll.test_home.core.common.R as ResCommon
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -123,6 +127,7 @@ fun CamerasScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CamerasList(
     items: List<CameraDetails>,
@@ -133,9 +138,29 @@ private fun CamerasList(
 
     var prevRoom by remember { mutableStateOf(Room.FIRST) }
 
+    var currentSwipeState: SwipeableState<Int>? by remember {
+        mutableStateOf(null)
+    }
+    val coroutineScope = rememberCoroutineScope()
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (currentSwipeState != null && currentSwipeState!!.currentValue != 0) {
+                    coroutineScope.launch {
+                        currentSwipeState?.animateTo(0)
+                        currentSwipeState = null
+                    }
+                }
+                return Offset.Zero
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection),
         state = rememberLazyListState(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -158,6 +183,11 @@ private fun CamerasList(
             CameraItem(
                 cameraDetails = item,
                 shimmerEffect = shimmerEffect,
+                currentSwipeState = currentSwipeState,
+                coroutineScope = coroutineScope,
+                onCurrentSwipeStateModify = {
+                    currentSwipeState = it
+                },
                 onFavourites = onFavourites
             )
 
@@ -166,51 +196,58 @@ private fun CamerasList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CameraItem(
     cameraDetails: CameraDetails,
     shimmerEffect: Color,
+    currentSwipeState: SwipeableState<Int>?,
+    coroutineScope: CoroutineScope,
+    onCurrentSwipeStateModify: (SwipeableState<Int>?) -> Unit,
     onFavourites: (camera: CameraDetails) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var show by remember { mutableStateOf(true) }
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissValue.DismissedToStart || it == DismissValue.DismissedToEnd) {
-                show = false
-                true
-            } else {
-                false
+    val onSwipeStateChanged = { state: SwipeableState<Int> ->
+        if (state.targetValue == 0 && currentSwipeState == state) {
+            onCurrentSwipeStateModify(null)
+        } else if (currentSwipeState == null) {
+            onCurrentSwipeStateModify(state)
+        } else {
+            coroutineScope.launch {
+                currentSwipeState.animateTo(0)
+                onCurrentSwipeStateModify(state)
             }
-        },
-        positionalThreshold = {
-            150.dp.toPx()
         }
-    )
-
-    AnimatedVisibility(
-        visible = show,
-        exit = fadeOut(spring())
-    ) {
-        SwipeToDismiss(
-            modifier = modifier,
-            state = dismissState,
-            background = {
-                CameraItemDismissBackground()
-            },
-            dismissContent = {
-                CameraItemContent(
-                    cameraDetails = cameraDetails,
-                    shimmerEffect = shimmerEffect
-                )
-            }
-        )
     }
 
-    LaunchedEffect(show) {
-        if (!show) {
-            onFavourites(cameraDetails)
+    SwipeBox(
+        modifier = modifier.fillMaxWidth(),
+        endContentWidth = 60.dp,
+        endContent = { swipeState, _ ->
+            SwipeIcon(
+                painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
+                contentDescription = null,
+                tint = Color.Yellow,
+                background = AppColors.Background,
+                weight = 1f,
+                iconSize = 44.dp
+            ) {
+                coroutineScope.launch {
+                    swipeState.animateTo(0)
+                }
+
+                onFavourites(cameraDetails)
+            }
+        }
+    ) { state, _, _ ->
+        CameraItemContent(
+            modifier = Modifier.padding(6.dp),
+            cameraDetails = cameraDetails,
+            shimmerEffect = shimmerEffect
+        )
+
+        LaunchedEffect(state.targetValue) {
+            onSwipeStateChanged(state)
         }
     }
 }
@@ -283,15 +320,19 @@ private fun CameraItemContent(
                         )
                     }
 
-                    if (cameraDetails.favorites) {
-                        Icon(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .size(24.dp),
-                            painter = painterResource(id = ResCommon.drawable.favourites),
-                            contentDescription = null,
-                            tint = Color.Yellow
-                        )
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                    ) {
+                        AnimatedVisibility(cameraDetails.favorites) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(24.dp),
+                                painter = painterResource(id = ResCommon.drawable.favourites),
+                                contentDescription = null,
+                                tint = Color.Yellow
+                            )
+                        }
                     }
                 }
             }

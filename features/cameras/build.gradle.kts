@@ -67,6 +67,8 @@ dependencies {
 
     implementation(libs.lifecycle.livedata.ktx)
 
+    implementation(libs.compose.swipebox)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

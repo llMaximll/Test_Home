@@ -1,5 +1,6 @@
 package com.github.llmaximll.test_home.features.doors
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeOut
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -47,10 +49,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -68,6 +75,10 @@ import com.github.llmaximll.test_home.core.common.log
 import com.github.llmaximll.test_home.core.common.models.Door
 import com.github.llmaximll.test_home.core.common.models.Room
 import com.github.llmaximll.test_home.core.common.theme.AppColors
+import com.kevinnzou.compose.swipebox.SwipeBox
+import com.kevinnzou.compose.swipebox.widget.SwipeIcon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import com.github.llmaximll.test_home.core.common.R as ResCommon
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -144,6 +155,7 @@ fun DoorsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DoorsList(
     items: List<Door>,
@@ -155,9 +167,29 @@ private fun DoorsList(
 
     var prevRoom by remember { mutableStateOf(Room.FIRST) }
 
+    var currentSwipeState: SwipeableState<Int>? by remember {
+        mutableStateOf(null)
+    }
+    val coroutineScope = rememberCoroutineScope()
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (currentSwipeState != null && currentSwipeState!!.currentValue != 0) {
+                    coroutineScope.launch {
+                        currentSwipeState?.animateTo(0)
+                        currentSwipeState = null
+                    }
+                }
+                return Offset.Zero
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection),
         state = rememberLazyListState(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -170,6 +202,11 @@ private fun DoorsList(
             DoorItem(
                 door = door,
                 shimmerEffect = shimmerEffect,
+                currentSwipeState = currentSwipeState,
+                coroutineScope = coroutineScope,
+                onCurrentSwipeStateModify = {
+                    currentSwipeState = it
+                },
                 onFavourites = onFavourites,
                 onEdit = onEdit
             )
@@ -179,58 +216,74 @@ private fun DoorsList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DoorItem(
     door: Door,
     shimmerEffect: Color,
+    currentSwipeState: SwipeableState<Int>?,
+    coroutineScope: CoroutineScope,
+    onCurrentSwipeStateModify: (SwipeableState<Int>?) -> Unit,
     onFavourites: (door: Door) -> Unit,
     onEdit: (door: Door) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var show by remember { mutableStateOf(true) }
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissValue.DismissedToStart || it == DismissValue.DismissedToEnd) {
-                show = false
-                true
-            } else {
-                false
+    val onSwipeStateChanged = { state: SwipeableState<Int> ->
+        if (state.targetValue == 0 && currentSwipeState == state) {
+            onCurrentSwipeStateModify(null)
+        } else if (currentSwipeState == null) {
+            onCurrentSwipeStateModify(state)
+        } else {
+            coroutineScope.launch {
+                currentSwipeState.animateTo(0)
+                onCurrentSwipeStateModify(state)
             }
-        },
-        positionalThreshold = {
-            150.dp.toPx()
         }
-    )
-
-    AnimatedVisibility(
-        visible = show,
-        exit = fadeOut(spring())
-    ) {
-        SwipeToDismiss(
-            modifier = modifier,
-            state = dismissState,
-            background = {
-                DoorItemDismissBackground(
-                    dismissState = dismissState
-                )
-            },
-            dismissContent = {
-                DoorItemContent(
-                    door = door,
-                    shimmerEffect = shimmerEffect
-                )
-            }
-        )
     }
 
-    LaunchedEffect(show) {
-        if (!show) {
-            if (dismissState.dismissDirection == DismissDirection.StartToEnd) {
-                onFavourites(door)
-            } else {
+    SwipeBox(
+        modifier = modifier.fillMaxWidth(),
+        endContentWidth = 120.dp,
+        endContent = { swipeState, _ ->
+            SwipeIcon(
+                painter = painterResource(id = ResCommon.drawable.edit_dismiss),
+                contentDescription = null,
+                tint = AppColors.TabsIndicator,
+                background = AppColors.Background,
+                weight = 1f,
+                iconSize = 44.dp
+            ) {
+                coroutineScope.launch {
+                    swipeState.animateTo(0)
+                }
+
                 onEdit(door)
             }
+
+            SwipeIcon(
+                painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
+                contentDescription = null,
+                tint = Color.Yellow,
+                background = AppColors.Background,
+                weight = 1f,
+                iconSize = 44.dp
+            ) {
+                coroutineScope.launch {
+                    swipeState.animateTo(0)
+                }
+
+                onFavourites(door)
+            }
+        }
+    ) { state, _, _ ->
+        DoorItemContent(
+            modifier = Modifier.padding(6.dp),
+            door = door,
+            shimmerEffect = shimmerEffect
+        )
+
+        LaunchedEffect(state.targetValue) {
+            onSwipeStateChanged(state)
         }
     }
 }
@@ -304,14 +357,19 @@ private fun DoorItemContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    CommonText(
-                        text = door.name
-                    )
+                    AnimatedContent(
+                        targetState = door.name,
+                        label = "Name"
+                    ) { name ->
+                        CommonText(
+                            text = name
+                        )
+                    }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Row {
-                        if (door.favorites) {
+                        AnimatedVisibility(door.favorites) {
                             Icon(
                                 modifier = Modifier
                                     .size(24.dp),

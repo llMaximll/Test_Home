@@ -22,6 +22,7 @@ realmGradlePlugin = "10.17.0"
 timberVersion = "5.0.1"
 coil = "2.5.0"
 lifecycleLivedataKtx = "2.6.2"
+composeSwipebox = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ realm-gradle-plugin = { group = "io.realm", name = "realm-gradle-plugin", versio
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timberVersion" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+compose-swipebox = { group = "io.github.kevinnzou", name = "compose-swipebox", version.ref = "composeSwipebox" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
