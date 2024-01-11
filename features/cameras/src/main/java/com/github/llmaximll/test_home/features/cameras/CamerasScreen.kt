@@ -33,7 +33,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.llmaximll.test_home.core.common.compose.CommonText
 import com.github.llmaximll.test_home.core.common.compose.rememberShimmerEffect
 import com.github.llmaximll.test_home.core.common.log
 import com.github.llmaximll.test_home.core.common.models.CameraDetails
@@ -96,10 +96,9 @@ fun CamerasScreen(
             }
 
             is CamerasUiState.Error -> {
-                Text(
+                CommonText(
                     modifier = Modifier.padding(16.dp),
                     text = stringResource(id = ResCommon.string.core_common_error_network),
-                    color = AppColors.OnBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center
@@ -147,10 +146,9 @@ private fun CamerasList(
             key = { _, item -> item.hashCode() }
         ) { index, item: CameraDetails ->
             if (item.room != prevRoom || index == 0) {
-                Text(
+                CommonText(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = item.room.titleRes),
-                    color = AppColors.OnBackground,
                     fontSize = 18.sp
                 )
 
@@ -298,12 +296,11 @@ private fun CameraItemContent(
                 }
             }
 
-            Text(
+            CommonText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 16.dp),
                 text = cameraDetails.name,
-                color = AppColors.OnBackground
             )
         }
     }

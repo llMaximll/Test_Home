@@ -62,12 +62,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.llmaximll.test_home.core.common.compose.CommonText
 import com.github.llmaximll.test_home.core.common.compose.rememberShimmerEffect
 import com.github.llmaximll.test_home.core.common.log
 import com.github.llmaximll.test_home.core.common.models.Door
 import com.github.llmaximll.test_home.core.common.models.Room
 import com.github.llmaximll.test_home.core.common.theme.AppColors
-import kotlin.random.Random
 import com.github.llmaximll.test_home.core.common.R as ResCommon
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -105,10 +105,9 @@ fun DoorsScreen(
             }
 
             is DoorsUiState.Error -> {
-                Text(
+                CommonText(
                     modifier = Modifier.padding(16.dp),
                     text = stringResource(id = ResCommon.string.core_common_error_network),
-                    color = AppColors.OnBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center
@@ -305,9 +304,8 @@ private fun DoorItemContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = door.name,
-                        color = AppColors.OnBackground
+                    CommonText(
+                        text = door.name
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -421,7 +419,7 @@ private fun EditNameDialog(
                                 onDismiss()
                             }
                         ) {
-                            Text(
+                            CommonText(
                                 text = stringResource(id = ResCommon.string.core_common_dialog_save_neutral),
                                 color = Color.White
                             )

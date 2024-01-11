@@ -31,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.llmaximll.test_home.R
+import com.github.llmaximll.test_home.core.common.compose.CommonText
 import com.github.llmaximll.test_home.features.cameras.CamerasScreen
 import com.github.llmaximll.test_home.features.doors.DoorsScreen
 import com.github.llmaximll.test_home.core.common.theme.AppColors
@@ -59,7 +61,10 @@ private fun TestHomeTopBar(
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
-            Text(text = stringResource(id = R.string.app_app_bar_title))
+            CommonText(
+                text = stringResource(id = R.string.app_app_bar_title),
+                fontSize = 20.sp
+            )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = AppColors.Background,
@@ -130,10 +135,10 @@ private fun Tabs(
                     }
                 }
             ) {
-                Text(
+                CommonText(
                     modifier = Modifier.padding(vertical = 16.dp),
                     text = title,
-                    color = AppColors.OnBackground
+                    fontSize = 16.sp
                 )
             }
         }

@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.github.llmaximll.test_home.features.doors"
-    compileSdk = 34
+    compileSdk = AppVersions.COMPILE_SDK
 
     defaultConfig {
-        minSdk = 21
+        minSdk = AppVersions.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -18,7 +18,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = AppVersions.IS_MINIFY_ENABLED
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -30,7 +30,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
+        kotlinCompilerExtensionVersion = AppVersions.KOTLIN_COMPILER_EXTENSION_VERSION
     }
 
     compileOptions {

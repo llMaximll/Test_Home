@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace = "com.github.llmaximll.test_home"
-    compileSdk = 34
+    compileSdk = AppVersions.COMPILE_SDK
 
     defaultConfig {
         applicationId = "com.github.llmaximll.test_home"
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = AppVersions.MIN_SDK
+        targetSdk = AppVersions.TARGET_SDK
+        versionCode = AppVersions.VERSION_CODE
+        versionName = AppVersions.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,7 +24,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = AppVersions.IS_MINIFY_ENABLED
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,7 +44,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
+        kotlinCompilerExtensionVersion = AppVersions.KOTLIN_COMPILER_EXTENSION_VERSION
     }
 
     packaging {
