@@ -1,4 +1,4 @@
-package com.github.llmaximll.test_home.ui.theme
+package com.github.llmaximll.test_home.core.common.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

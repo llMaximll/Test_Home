@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.llmaximll.test_home.ui.TestHomeApp
-import com.github.llmaximll.test_home.ui.theme.Test_HomeTheme
+import com.github.llmaximll.test_home.core.common.theme.Test_HomeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

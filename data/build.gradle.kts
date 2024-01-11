@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.dagger.hilt.android)
     id("kotlin-kapt")
     id("kotlinx-serialization")
+    id("realm-android")
 }
 
 android {
@@ -53,8 +54,6 @@ dependencies {
     implementation(libs.ktor.logging)
 
     implementation(libs.kotlinx.serialization)
-
-    implementation(libs.realm)
 
     implementation(libs.gson)
 

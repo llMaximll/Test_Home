@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.github.llmaximll.test_home.R
 import com.github.llmaximll.test_home.features.cameras.CamerasScreen
 import com.github.llmaximll.test_home.features.doors.DoorsScreen
-import com.github.llmaximll.test_home.ui.theme.AppColors
+import com.github.llmaximll.test_home.core.common.theme.AppColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -112,7 +112,7 @@ private fun Tabs(
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                height = 1.dp,
+                height = 3.dp,
                 color = AppColors.TabsIndicator
             )
         }
@@ -131,7 +131,7 @@ private fun Tabs(
                 }
             ) {
                 Text(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 16.dp),
                     text = title,
                     color = AppColors.OnBackground
                 )
@@ -148,7 +148,8 @@ private fun TabsContent(
 ) {
     HorizontalPager(
         modifier = modifier,
-        state = pagerState
+        state = pagerState,
+        userScrollEnabled = false
     ) { page ->
         when (page) {
             0 -> CamerasScreen()

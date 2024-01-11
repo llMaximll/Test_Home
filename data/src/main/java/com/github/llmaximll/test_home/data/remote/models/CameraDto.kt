@@ -5,6 +5,7 @@ import com.github.llmaximll.test_home.core.common.models.Camera
 import com.github.llmaximll.test_home.core.common.models.CameraDetails
 import com.github.llmaximll.test_home.core.common.models.Room
 import com.google.gson.annotations.SerializedName
+import java.util.UUID
 
 @Keep
 data class CameraDto(
@@ -39,7 +40,8 @@ internal fun CameraDto.asModel(): Camera? {
 
 private fun CameraDetailsDto.asModel(): CameraDetails? {
     return CameraDetails(
-        id = this.id ?: return null,
+        localId = UUID.randomUUID().toString(),
+        remoteId = this.id ?: return null,
         name = this.name ?: return null,
         snapshot = this.snapshot ?: return null,
         room = this.room ?: Room.UNDEFINED,

@@ -12,14 +12,16 @@ appcompat = "1.6.1"
 material = "1.11.0"
 jetbrainsKotlinJvm = "1.9.21"
 ktor = "2.3.7"
-realm = "10.17.0"
 gsonVersion = "2.10.1"
 hilt = "2.50"
 hiltNavigationCompose = "1.1.0"
 hiltCompilerVersion = "1.1.0"
 kotlinSerialization = "1.6.0"
 composeLiveData = "1.5.4"
+realmGradlePlugin = "10.17.0"
 timberVersion = "5.0.1"
+coil = "2.5.0"
+lifecycleLivedataKtx = "2.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +38,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material = { group = "androidx.compose.material", name = "material" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -44,7 +47,6 @@ ktor-json-jvm = { group = "io.ktor", name = "ktor-client-json-jvm", version.ref 
 ktor-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktor" }
-realm = { group = "io.realm", name = "realm-gradle-plugin", version.ref = "realm" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gsonVersion" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -52,7 +54,10 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompilerVersion" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 compose-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "composeLiveData" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
+realm-gradle-plugin = { group = "io.realm", name = "realm-gradle-plugin", version.ref = "realmGradlePlugin" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timberVersion" }
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

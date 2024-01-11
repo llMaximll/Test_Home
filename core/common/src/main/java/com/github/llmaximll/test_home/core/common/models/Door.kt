@@ -4,9 +4,10 @@ import androidx.annotation.Keep
 
 @Keep
 data class Door(
-    val id: Int,
+    val localId: String,
+    val remoteId: Int,
     val name: String,
     val room: Room,
     val favorites: Boolean,
-    val snapshot: String
+    val snapshot: String?
 )

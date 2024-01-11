@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.llmaximll.test_home.core.common.DataRepository
-import com.github.llmaximll.test_home.core.common.models.Camera
+import com.github.llmaximll.test_home.core.common.err
+import com.github.llmaximll.test_home.core.common.models.CameraDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,29 +20,54 @@ class CamerasViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mutableCameras = MutableLiveData<CamerasUiState>(CamerasUiState.Init)
-    val cameras: LiveData<CamerasUiState>
-        get() = mutableCameras
+    val cameras: LiveData<CamerasUiState> = mutableCameras
+
+    private var job: Job? = null
 
     init {
         getCameras()
     }
 
     private fun getCameras() {
-        viewModelScope.launch(
+        job?.cancel()
+        job = viewModelScope.launch(
             CoroutineExceptionHandler { _, exception ->
+                err(exception.message.toString())
                 mutableCameras.value = CamerasUiState.Error(exception)
             }
         ) {
             mutableCameras.value = CamerasUiState.Loading
 
-            val result = dataRepository.getCameras()
-            val data = result.getOrNull()
-
-            if (result.isSuccess && data != null) {
-                mutableCameras.value = CamerasUiState.Success(data)
-            } else {
-                mutableCameras.value = CamerasUiState.Error(result.exceptionOrNull())
+            dataRepository.getAllCamerasFlow().collectLatest { list ->
+                if (list.isNotEmpty()) {
+                    mutableCameras.value = CamerasUiState.Success(list.sortedBy { it.room.ordinal })
+                } else {
+                    mutableCameras.value = CamerasUiState.Error()
+                }
             }
+        }
+    }
+
+    fun toggleFavourite(camera: CameraDetails) {
+        viewModelScope.launch(
+            CoroutineExceptionHandler { _, exception ->
+                err(exception.message.toString())
+                mutableCameras.value = CamerasUiState.Error(exception)
+            }
+        ) {
+            dataRepository.updateCameraLocal(camera.copy(favorites = !camera.favorites))
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch(
+            CoroutineExceptionHandler { _, exception ->
+                err(exception.message.toString())
+                mutableCameras.value = CamerasUiState.Error(exception)
+            }
+        ) {
+            dataRepository.deleteAllCamerasLocal()
+            getCameras()
         }
     }
 }
@@ -50,7 +78,7 @@ sealed class CamerasUiState {
 
     data object Loading : CamerasUiState()
 
-    data class Success(val camera: Camera) : CamerasUiState()
+    data class Success(val cameras: List<CameraDetails>) : CamerasUiState()
 
     data class Error(val e: Throwable? = null) : CamerasUiState()
 }

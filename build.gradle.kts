@@ -7,3 +7,9 @@ plugins {
     alias(libs.plugins.dagger.hilt.android) apply false
     kotlin("plugin.serialization") version "1.9.21"
 }
+
+buildscript {
+    dependencies {
+        classpath(libs.realm.gradle.plugin)
+    }
+}

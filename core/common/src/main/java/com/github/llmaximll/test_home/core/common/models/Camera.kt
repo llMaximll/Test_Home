@@ -10,7 +10,8 @@ data class Camera(
 
 @Keep
 data class CameraDetails(
-    val id: Int,
+    val localId: String,
+    val remoteId: Int,
     val name: String,
     val snapshot: String,
     val room: Room,

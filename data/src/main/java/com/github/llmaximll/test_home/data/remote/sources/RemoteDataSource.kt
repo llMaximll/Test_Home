@@ -1,25 +1,19 @@
 package com.github.llmaximll.test_home.data.remote.sources
 
 import com.github.llmaximll.test_home.core.common.err
-import com.github.llmaximll.test_home.core.common.log
 import com.github.llmaximll.test_home.data.remote.models.CameraDto
 import com.github.llmaximll.test_home.data.remote.models.DoorDto
 import com.github.llmaximll.test_home.data.remote.models.RequestResult
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
-import io.ktor.client.request.invoke
-import io.ktor.client.request.request
-import io.ktor.http.Url
-import io.ktor.util.KtorDsl
 import javax.inject.Inject
 
 interface RemoteDataSource {
 
     suspend fun getCameras(): RequestResult<CameraDto>?
 
-    suspend fun getDoors(): RequestResult<DoorDto>?
+    suspend fun getDoors(): RequestResult<List<DoorDto>>?
 }
 
 class RemoteDataSourceImpl @Inject constructor(
@@ -38,10 +32,10 @@ class RemoteDataSourceImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getDoors(): RequestResult<DoorDto>? {
+    override suspend fun getDoors(): RequestResult<List<DoorDto>>? {
         return try {
             val response = client.get("http://cars.cprogroup.ru/api/rubetek/doors/")
-            response.body<RequestResult<DoorDto>>()
+            response.body<RequestResult<List<DoorDto>>>()
         } catch (e: Exception) {
             err(e)
             null

@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import com.github.llmaximll.test_home.core.common.models.Door
 import com.github.llmaximll.test_home.core.common.models.Room
 import com.google.gson.annotations.SerializedName
+import java.util.UUID
 
 @Keep
 data class DoorDto(
@@ -21,9 +22,10 @@ data class DoorDto(
 
 internal fun DoorDto.asModel(): Door? {
     return Door(
-        id = this.id ?: return null,
+        localId = UUID.randomUUID().toString(),
+        remoteId = this.id ?: return null,
         name = this.name ?: return null,
-        snapshot = this.snapshot ?: return null,
+        snapshot = this.snapshot,
         room = this.room ?: Room.UNDEFINED,
         favorites = this.favorites ?: false
     )
