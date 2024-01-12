@@ -43,7 +43,7 @@ private fun CameraDetailsDto.asModel(): CameraDetails? {
         localId = UUID.randomUUID().toString(),
         remoteId = this.id ?: return null,
         name = this.name ?: return null,
-        snapshot = this.snapshot ?: return null,
+        snapshot = this.snapshot,
         room = this.room ?: Room.UNDEFINED,
         favorites = this.favorites ?: false,
         rec = this.rec ?: false

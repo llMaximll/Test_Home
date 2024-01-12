@@ -1,5 +1,6 @@
 package com.github.llmaximll.test_home.features.cameras
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -227,7 +228,7 @@ private fun CameraItem(
             SwipeIcon(
                 painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
                 contentDescription = null,
-                tint = Color.Yellow,
+                tint = Color.Unspecified,
                 background = AppColors.Background,
                 weight = 1f,
                 iconSize = 44.dp
@@ -270,61 +271,88 @@ private fun CameraItemContent(
             defaultElevation = 4.dp
         )
     ) {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(200.dp),
-                contentAlignment = Alignment.Center
+        Box {
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(
+                if (cameraDetails.snapshot != null) {
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(shimmerEffect),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(cameraDetails.snapshot)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = cameraDetails.name,
+                            contentScale = ContentScale.FillWidth
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = .4f))
+                                .padding(12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            IconButton(
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(64.dp),
+                                    painter = painterResource(id = ResCommon.drawable.play_button),
+                                    contentDescription = null,
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(16.dp)
+                        ) {
+                            AnimatedVisibility(cameraDetails.favorites) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    painter = painterResource(id = ResCommon.drawable.favourites),
+                                    contentDescription = null,
+                                    tint = Color.Yellow
+                                )
+
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                        }
+                    }
+                }
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(shimmerEffect),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(cameraDetails.snapshot)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = cameraDetails.name,
-                    contentScale = ContentScale.FillWidth
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = .4f))
-                        .padding(12.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(horizontal = 12.dp, vertical = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(64.dp),
-                            painter = painterResource(id = ResCommon.drawable.play_button),
-                            contentDescription = null,
-                            tint = Color.White
+                    AnimatedContent(
+                        targetState = cameraDetails.name,
+                        label = "Name"
+                    ) { name ->
+                        CommonText(
+                            text = name
                         )
                     }
 
-                    if (cameraDetails.rec) {
-                        Icon(
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .size(24.dp),
-                            painter = painterResource(id = ResCommon.drawable.rec),
-                            contentDescription = null,
-                            tint = Color.Red
-                        )
-                    }
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                    ) {
-                        AnimatedVisibility(cameraDetails.favorites) {
+                    Row {
+                        AnimatedVisibility(cameraDetails.favorites && cameraDetails.snapshot == null) {
                             Icon(
                                 modifier = Modifier
                                     .size(24.dp),
@@ -332,47 +360,12 @@ private fun CameraItemContent(
                                 contentDescription = null,
                                 tint = Color.Yellow
                             )
+
+                            Spacer(modifier = Modifier.width(4.dp))
                         }
                     }
                 }
             }
-
-            CommonText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 16.dp),
-                text = cameraDetails.name,
-            )
         }
-    }
-}
-
-@Composable
-private fun CameraItemDismissBackground(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppColors.Background)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Icon(
-            modifier = Modifier.size(44.dp),
-            painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
-            contentDescription = null,
-            tint = Color.Yellow
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Icon(
-            modifier = Modifier.size(44.dp),
-            painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
-            contentDescription = null,
-            tint = Color.Yellow
-        )
     }
 }

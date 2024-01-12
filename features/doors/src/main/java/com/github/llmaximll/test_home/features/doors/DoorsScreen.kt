@@ -248,7 +248,7 @@ private fun DoorItem(
             SwipeIcon(
                 painter = painterResource(id = ResCommon.drawable.edit_dismiss),
                 contentDescription = null,
-                tint = AppColors.TabsIndicator,
+                tint = Color.Unspecified,
                 background = AppColors.Background,
                 weight = 1f,
                 iconSize = 44.dp
@@ -263,7 +263,7 @@ private fun DoorItem(
             SwipeIcon(
                 painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
                 contentDescription = null,
-                tint = Color.Yellow,
+                tint = Color.Unspecified,
                 background = AppColors.Background,
                 weight = 1f,
                 iconSize = 44.dp
@@ -390,42 +390,6 @@ private fun DoorItemContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DoorItemDismissBackground(
-    dismissState: DismissState,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppColors.Background)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        if (dismissState.dismissDirection == DismissDirection.StartToEnd) {
-            Icon(
-                modifier = Modifier.size(44.dp),
-                painter = painterResource(id = ResCommon.drawable.favourites_dismiss),
-                contentDescription = null,
-                tint = Color.Yellow
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        if (dismissState.dismissDirection == DismissDirection.EndToStart) {
-            Icon(
-                modifier = Modifier.size(44.dp),
-                painter = painterResource(id = ResCommon.drawable.edit_dismiss),
-                contentDescription = null,
-                tint = AppColors.TabsIndicator
-            )
         }
     }
 }

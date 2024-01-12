@@ -30,8 +30,8 @@ internal val fakeCameras = Camera(
             localId = UUID.randomUUID().toString(),
             remoteId = 2,
             name = "Camera 45",
-            snapshot = "https://serverspace.ru/wp-content/uploads/2019/06/backup-i-snapshot.png",
-            room = Room.FIRST,
+            snapshot = null,
+            room = Room.SECOND,
             favorites = false,
             rec = true
         ),
